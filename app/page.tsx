@@ -55,7 +55,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold mb-8 text-blue-600 border-b pb-2">
         媒体列表
       </h1>
-      
+
       {/* 搜索框 */}
       <div className="mb-6">
         <Input
@@ -67,11 +67,14 @@ export default function Home() {
           }}
           placeholder="搜索媒体名称..."
           size="sm"
-          startContent={<MagnifyingGlassIcon className="w-4 h-4 text-default-400" />}
+          startContent={
+            <MagnifyingGlassIcon className="w-4 h-4 text-default-400" />
+          }
           type="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+        n
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
