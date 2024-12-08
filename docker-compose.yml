@@ -7,4 +7,7 @@ services:
       - "7788:7788"
     environment:
       - NODE_ENV=production
+      - PORT=7788
+      # - NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
+      # - PNPM_REGISTRY=https://registry.npmmirror.com
     restart: always 

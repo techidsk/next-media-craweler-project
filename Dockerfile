@@ -1,8 +1,10 @@
 # 使用官方 Node.js 镜像作为基础镜像
 FROM node:18-alpine
 
-# 安装 pnpm
+# 设置 npm 和 pnpm 镜像
+RUN npm config set registry https://registry.npmmirror.com
 RUN npm install -g pnpm
+RUN pnpm config set registry https://registry.npmmirror.com
 
 # 设置工作目录
 WORKDIR /app
