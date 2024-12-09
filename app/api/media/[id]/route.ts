@@ -1,3 +1,5 @@
+export const revalidate = 90
+
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -6,7 +8,9 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('Received POST request:', new Date().toISOString());
     const body = await request.json();
+    console.log('Request body:', body);
     const size = Number(body.pageSize || 20);
     const page = Number(body.page || 1);
     const title = body.title || "";
@@ -43,11 +47,18 @@ export async function POST(
 
     const total = Number(countResult?.count ?? 0);
 
-    return NextResponse.json({
-      items: items,
-      total,
-      totalPages: Math.ceil(total / size),
-    });
+    return NextResponse.json(
+      {
+        items: items,
+        total,
+        totalPages: Math.ceil(total / size),
+      },
+      {
+        headers: {
+          'Cache-Control': 's-maxage=90, stale-while-revalidate',
+        },
+      }
+    );
   } catch (error) {
     console.error("Database query error:", error);
     return NextResponse.json(
