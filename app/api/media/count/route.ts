@@ -6,13 +6,18 @@ import { NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { start_time, end_time, media_id } = await request.json();
+    const utcOffset = 8; // UTC+8
+
+    // 调整时区
+    const startTime = new Date(new Date(start_time).getTime() + utcOffset * 60 * 60 * 1000);
+    const endTime = new Date(new Date(end_time).getTime() + utcOffset * 60 * 60 * 1000);
 
     const result = await db
       .selectFrom("site_url")
       .select(db.fn.count<string>("id").as("count"))
       .where("media_id", "=", media_id)
-      .where("time", ">=", start_time)
-      .where("time", "<=", end_time)
+      .where("time", ">=", startTime)
+      .where("time", "<=", endTime)
       .executeTakeFirst();
 
     return Response.json({

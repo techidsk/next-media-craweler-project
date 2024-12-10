@@ -17,15 +17,18 @@ export async function POST(
     const { startTime, endTime } = body;
     const offset = (page - 1) * size;
 
-    // 如果没有指定时间范围，默认使用最近一年
-    const defaultStartTime = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
-    const defaultEndTime = new Date();
+    // 如果没有指定时间范围，默认使用最近一年（使用UTC+8时区）
+    const now = new Date();
+    const utcOffset = 8; // UTC+8
+    const localNow = new Date(now.getTime() + utcOffset * 60 * 60 * 1000);
+    const defaultStartTime = new Date(localNow.getTime() - 365 * 24 * 60 * 60 * 1000);
+    const defaultEndTime = localNow;
 
     let baseQuery = db
       .selectFrom("site_url")
       .where("media_id", "=", Number(params.id))
-      .where("time", ">=", startTime ? new Date(startTime) : defaultStartTime)
-      .where("time", "<=", endTime ? new Date(endTime) : defaultEndTime);
+      .where("time", ">=", startTime ? new Date(new Date(startTime).getTime() + utcOffset * 60 * 60 * 1000) : defaultStartTime)
+      .where("time", "<=", endTime ? new Date(new Date(endTime).getTime() + utcOffset * 60 * 60 * 1000) : defaultEndTime);
 
     if (title.trim()) {
       baseQuery = baseQuery.where((eb) =>
@@ -82,7 +85,12 @@ export async function GET(
       .limit(100)
       .execute();
 
-    return NextResponse.json({ items });
+    return NextResponse.json({ items }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      }
+    });
   } catch (error) {
     console.error("Database query error:", error);
     return NextResponse.json(

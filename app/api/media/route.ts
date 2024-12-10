@@ -5,13 +5,20 @@ import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    // 获取今天和昨天的日期范围
-    const today = new Date();
+    // 获取今天和昨天的日期范围（使用UTC+8时区）
+    const now = new Date();
+    const utcOffset = 8; // UTC+8
+    const today = new Date(now.getTime() + utcOffset * 60 * 60 * 1000);
     today.setHours(0, 0, 0, 0);
+    
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+    
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
+
+    const weekAgo = new Date(today);
+    weekAgo.setDate(weekAgo.getDate() - 7);
 
     // 获取所有活跃的媒体
     const mediaList = await db
@@ -20,8 +27,6 @@ export async function GET(request: NextRequest) {
       .where("active", "=", true)
       .execute();
 
-    const weekAgo = new Date(today);
-    weekAgo.setDate(weekAgo.getDate() - 7);
     // 获取每个媒体今天和昨天的统计数据
     const [todayCounts, yesterdayCounts, weekCounts] = await Promise.all([
       // 今天的统计
@@ -42,6 +47,7 @@ export async function GET(request: NextRequest) {
         .groupBy("media_id")
         .execute(),
 
+      // 一周的统计
       db
         .selectFrom("site_url")
         .select(["media_id", db.fn.count<string>("id").as("count")])

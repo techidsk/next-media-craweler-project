@@ -8,8 +8,11 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
       retry: 1,
+      staleTime: 0,
     },
   },
 });
