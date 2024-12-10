@@ -14,6 +14,8 @@ export async function fetchMediaData({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Pragma": "no-cache",
     },
     body: JSON.stringify({
       page,
@@ -35,6 +37,11 @@ export async function searchCount(params: {
     start_time: dayjs(params.start_time).format("YYYY-MM-DD HH:mm:ss"),
     end_time: dayjs(params.end_time).format("YYYY-MM-DD HH:mm:ss"),
     media_id: params.mediaId,
+  }, {
+    headers: {
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Pragma": "no-cache",
+    }
   });
 
   return response.data;

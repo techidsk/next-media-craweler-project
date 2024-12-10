@@ -17,6 +17,11 @@ export async function POST(request: NextRequest) {
 
     return Response.json({
       count: Number(result?.count ?? 0),
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      }
     });
   } catch (error) {
     console.error("Count query error:", error);

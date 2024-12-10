@@ -55,7 +55,8 @@ export async function POST(
       },
       {
         headers: {
-          'Cache-Control': 's-maxage=90, stale-while-revalidate',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
         },
       }
     );

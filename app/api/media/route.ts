@@ -65,7 +65,12 @@ export async function GET(request: NextRequest) {
       ),
     }));
 
-    return Response.json({ data });
+    return Response.json({ data }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      }
+    });
   } catch (error) {
     console.error("Database query error:", error);
     return Response.json({ error: "Internal Server Error" }, { status: 500 });
